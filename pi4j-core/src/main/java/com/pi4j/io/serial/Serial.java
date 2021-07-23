@@ -66,7 +66,6 @@ public interface Serial extends IO<Serial, SerialConfig, SerialProvider>, AutoCl
      */
     boolean isOpen();
 
-
     /**
      * Get the number of data bytes available in the serial receive buffer
      *
@@ -100,4 +99,17 @@ public interface Serial extends IO<Serial, SerialConfig, SerialProvider>, AutoCl
      * <p>close.</p>
      */
     void close();
+
+    /**
+     * <p>addListener.</p>
+     *
+     * @param listener a {@link SerialDataEventListener} object.
+     */
+    void addListener(SerialDataEventListener... listener);
+    /**
+     * <p>removeListener.</p>
+     *
+     * @param listener a {@link SerialDataEventListener} object.
+     */
+    void removeListener(SerialDataEventListener... listener);
 }

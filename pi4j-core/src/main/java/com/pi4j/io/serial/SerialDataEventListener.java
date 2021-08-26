@@ -25,16 +25,18 @@ package com.pi4j.io.serial;
  * #L%
  */
 
-
-import com.pi4j.io.gpio.digital.DigitalListener;
-import com.pi4j.io.gpio.digital.DigitalStateChangeEvent;
-
 /**
  * <p>SerialChangeListener interface.</p>
  *
  * @author Frank Delporte (<a href="https://webtechie.be">https://webtechie.be</a>)
  * @version $Id: $Id
  */
-public interface SerialDataEventListener extends DigitalListener<DigitalStateChangeEvent> {
-    void onDigitalStateChange(DigitalStateChangeEvent event);
+public interface SerialDataEventListener extends SerialListener<SerialEvent> {
+    /**
+     * This is the event callback method that will be invoked when new serial data is received.
+     *
+     * @see SerialDataEvent
+     * @param event serial data event
+     */
+    void dataReceived(SerialDataEvent event);
 }

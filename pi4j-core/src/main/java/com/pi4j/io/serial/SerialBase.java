@@ -43,7 +43,6 @@ public abstract class SerialBase extends IOBase<Serial, SerialConfig, SerialProv
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
     protected boolean isOpen = false;
-    protected final CopyOnWriteArrayList<SerialDataEventListener> listeners;
 
     /**
      * <p>Constructor for SerialBase.</p>
@@ -53,7 +52,6 @@ public abstract class SerialBase extends IOBase<Serial, SerialConfig, SerialProv
      */
     protected SerialBase(SerialProvider provider, SerialConfig config){
         super(provider, config);
-        listeners = new CopyOnWriteArrayList<>();
         logger.trace("created instance with config: {}", config);
     }
 
@@ -65,106 +63,8 @@ public abstract class SerialBase extends IOBase<Serial, SerialConfig, SerialProv
 
     /** {@inheritDoc} */
     @Override
-    public void open() {
-        /*
-        CODE FROM V1
-        // open serial port
-        fileDescriptor = com.pi4j.jni.Serial.open(device, baud, dataBits, parity, stopBits, flowControl);
-
-        // read in initial buffered data (if any) into the receive buffer
-        int available = com.pi4j.jni.Serial.available(fileDescriptor);
-
-        if(available > 0) {
-            byte[] initial_data = com.pi4j.jni.Serial.read(fileDescriptor, available);
-            if (initial_data.length > 0) {
-                try {
-                    // write data to the receive buffer
-                    receiveBuffer.write(initial_data);
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        // create a serial data listener event for data receive events from the serial device
-        SerialInterrupt.addListener(fileDescriptor, new SerialInterruptListener() {
-            @Override
-            public void onDataReceive(SerialInterruptEvent event) {
-
-                // ignore any event triggers that are missing data
-                if(event.getLength() <= 0) return;
-
-                try {
-                    SerialDataEvent sde = null;
-
-                    if(isBufferingDataReceived()) {
-                        // stuff event data payload into the receive buffer
-                        receiveBuffer.write(event.getData());
-
-                        //System.out.println("BUFFER SIZE : " + receiveBuffer.capacity());
-                        //System.out.println("BUFFER LEFT : " + receiveBuffer.remaining());
-                        //System.out.println("BUFFER AVAIL: " + receiveBuffer.available());
-
-                        // create the serial data event; since we are buffering data
-                        // it will be located in the receive buffer
-                        sde = new SerialDataEvent(SerialImpl.this);
-                    }
-                    else{
-                        // create the serial data event; since we are NOT buffering data
-                        // we will pass the specific data payload directly into the event
-                        sde = new SerialDataEvent(SerialImpl.this, event.getData());
-                    }
-
-                    // add a new serial data event notification to the thread pool for *immediate* execution
-                    // we notify the event listeners on a separate thread to prevent blocking the native monitoring thread
-                    if(!listeners.isEmpty() && isOpen()) {
-                        // don't add event if executor has been shutdown or terminated
-                        if(!executor.isTerminated() && !executor.isShutdown()) {
-                            try {
-                                executor.execute(new SerialDataEventDispatchTaskImpl(sde, listeners));
-                            }
-                            catch(java.util.concurrent.RejectedExecutionException e){
-                                // do nothing, we are most likely in a shutdown
-                            }
-                        }
-                    }
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        // ensure file descriptor is valid
-        if (fileDescriptor == -1) {
-            throw new IOException("Cannot open serial port");
-        }
-         */
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void close() {
         logger.trace("invoked 'closed()'");
         this.isOpen = false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized void addListener(SerialDataEventListener... listener) {
-        // add the new listener to the list of listeners
-        Collections.addAll(listeners,listener);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public synchronized void removeListener(SerialDataEventListener... listener) {
-        // remove the listener from the list of listeners
-        for (SerialDataEventListener lsnr : listener) {
-            listeners.remove(lsnr);
-        }
     }
 }

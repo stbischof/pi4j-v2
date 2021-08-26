@@ -27,17 +27,14 @@ package com.pi4j.plugin.pigpio.provider.serial;
  * #L%
  */
 
-
 import com.pi4j.context.Context;
 import com.pi4j.exception.InitializeException;
-import com.pi4j.io.serial.Serial;
-import com.pi4j.io.serial.SerialBase;
-import com.pi4j.io.serial.SerialConfig;
-import com.pi4j.io.serial.SerialProvider;
+import com.pi4j.io.serial.*;
 import com.pi4j.library.pigpio.PiGpio;
 import com.pi4j.library.pigpio.PiGpioMode;
 
 import java.io.IOException;
+import java.util.Collections;
 
 /**
  * <p>PiGpioSerial class.</p>
@@ -48,7 +45,7 @@ import java.io.IOException;
 public class PiGpioSerial extends SerialBase implements Serial {
 
     protected final PiGpio piGpio;
-    protected final int handle;
+    protected int handle;
 
     /**
      * <p>Constructor for PiGpioSerial.</p>
@@ -70,11 +67,18 @@ public class PiGpioSerial extends SerialBase implements Serial {
             piGpio.gpioSetMode(15, PiGpioMode.ALT5);
         }
 
-        // create SERIAL instance of PIGPIO SERIAL
-        this.handle = piGpio.serOpen(config.device(), config.baud());
+        open();
+    }
 
-        // set open state flag
-        this.isOpen = true;
+    @Override
+    public void open() {
+        if (isOpen) {
+            // create SERIAL instance of PIGPIO SERIAL
+            this.handle = piGpio.serOpen(config.device(), config.baud());
+
+            // set open state flag
+            this.isOpen = true;
+        }
     }
 
     /** {@inheritDoc} */
@@ -138,5 +142,19 @@ public class PiGpioSerial extends SerialBase implements Serial {
     @Override
     public int drain() {
         return piGpio.serDrain(this.handle);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void addListener(SerialDataEventListener... listener) {
+        // NOP
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public synchronized void removeListener(SerialDataEventListener... listener) {
+        // NOP
     }
 }

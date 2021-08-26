@@ -217,14 +217,6 @@
         <pi4j.dev.password>${pi4j.default.password}</pi4j.dev.password>
         <pi4j.dev.directory>pi4j-dev</pi4j.dev.directory>
 
-        <pi4j.test.pigpio.host>${pi4j.default.host}</pi4j.test.pigpio.host>
-        <pi4j.test.pigpio.port>8888</pi4j.test.pigpio.port>
-
-        <!-- SETTING FOR ARDUINO TEST HARNESS HARDWARE TESTING -->
-        <!-- (you will need to override these in your "~/.m2/settings.xml" for your own development) -->
-        <pi4j.test.harness.enabled>false</pi4j.test.harness.enabled>
-        <pi4j.test.harness.port>tty.usbmodem142301</pi4j.test.harness.port>
-
         <!-- DEFAULT Pi4J BUILD PROPERTIES FOR THE 'RaspberryPi' PLATFORM -->
         <!--<raspberrypi.build>false</raspberrypi.build>-->
         <!--<raspberrypi.platform>raspberrypi</raspberrypi.platform>-->
